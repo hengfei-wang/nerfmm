@@ -30,6 +30,7 @@ def parse_args():
     parser.add_argument('--epoch', default=10000, type=int)
     parser.add_argument('--eval_img_interval', default=100, type=int, help='eval images every this epoch number')
     parser.add_argument('--eval_cam_interval', default=5, type=int, help='eval camera params every this epoch number')
+    parser.add_argument('--save_ckpt_interval', default=1000, type=int, help='save checkpoint every this eopch number')
 
     parser.add_argument('--gpu_id', default=0, type=int)
     parser.add_argument('--multi_gpu',  default=False, type=eval, choices=[True, False])
@@ -440,11 +441,12 @@ def main(args):
             with torch.no_grad():
                 eval_one_epoch_img(eval_c2ws, scene_train, model, focal_net, pose_param_net, my_devices,
                                    args, epoch_i, writer, rgb_act_fn)
-
-                # save the latest model.
-                save_checkpoint(epoch_i, model, optimizer_nerf, experiment_dir, ckpt_name='latest_nerf')
-                save_checkpoint(epoch_i, focal_net, optimizer_focal, experiment_dir, ckpt_name='latest_focal')
-                save_checkpoint(epoch_i, pose_param_net, optimizer_pose, experiment_dir, ckpt_name='latest_pose')
+                
+        if epoch_i % args.save_ckpt_interval == 0 and epoch_i > 0:
+            # save the latest model.
+            save_checkpoint(epoch_i, model, optimizer_nerf, experiment_dir, ckpt_name='nerf_{0}'.format(args.save_ckpt_interval))
+            save_checkpoint(epoch_i, focal_net, optimizer_focal, experiment_dir, ckpt_name='focal_{0}'.format(args.save_ckpt_interval))
+            save_checkpoint(epoch_i, pose_param_net, optimizer_pose, experiment_dir, ckpt_name='pose_{0}'.format(args.save_ckpt_interval))
     return
 
 
