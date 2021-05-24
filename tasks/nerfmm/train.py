@@ -443,10 +443,11 @@ def main(args):
                                    args, epoch_i, writer, rgb_act_fn)
                 
         if epoch_i % args.save_ckpt_interval == 0 and epoch_i > 0:
-            # save the latest model.
-            save_checkpoint(epoch_i, model, optimizer_nerf, experiment_dir, ckpt_name='nerf_{0}'.format(args.save_ckpt_interval))
-            save_checkpoint(epoch_i, focal_net, optimizer_focal, experiment_dir, ckpt_name='focal_{0}'.format(args.save_ckpt_interval))
-            save_checkpoint(epoch_i, pose_param_net, optimizer_pose, experiment_dir, ckpt_name='pose_{0}'.format(args.save_ckpt_interval))
+            with torch.no_grad():
+                # save the latest model.
+                save_checkpoint(epoch_i, model, optimizer_nerf, experiment_dir, ckpt_name='nerf_{0}'.format(args.save_ckpt_interval))
+                save_checkpoint(epoch_i, focal_net, optimizer_focal, experiment_dir, ckpt_name='focal_{0}'.format(args.save_ckpt_interval))
+                save_checkpoint(epoch_i, pose_param_net, optimizer_pose, experiment_dir, ckpt_name='pose_{0}'.format(args.save_ckpt_interval))
     return
 
 
